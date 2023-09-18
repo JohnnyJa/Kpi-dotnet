@@ -7,9 +7,11 @@ public interface IQueue<T>
     
     public bool Contains(T item);
     
-    public T Dequeue();
-
     public void Enqueue(T item);
 
+    public T Dequeue();
+    
     public T Peek();
+
+    public T[] ToArray();
 }
