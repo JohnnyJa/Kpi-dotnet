@@ -9,6 +9,10 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     private Node? _tail;
     private int _size = 0;
 
+    public event EventHandler? ItemAdded;
+    public event EventHandler? ItemDeleted;
+    public event EventHandler? QueueCleared;
+
 
     public int Count => _size;
     public bool IsSynchronized => false;
@@ -35,8 +39,9 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
             _tail!.Next = newNode;          //Will never be null if head isn't null
             _tail = _tail.Next;
         }
-
         _size++;
+        
+        ItemAdded?.Invoke(this, EventArgs.Empty);
     }
     
     public T Dequeue()
@@ -50,6 +55,8 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
         _head = _head.Next;
         
         _size--;
+        
+        ItemDeleted?.Invoke(this, EventArgs.Empty);
         
         return removed;
     }
@@ -68,6 +75,8 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     {
         _size = 0;
         _head = null;
+        
+        QueueCleared?.Invoke(this, EventArgs.Empty);
     }
 
     public bool Contains(T item)
