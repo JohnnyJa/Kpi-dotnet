@@ -7,22 +7,16 @@ public class MyQueue<T> : IEnumerable<T>
 {
     private Node? _head;
     private Node? _tail;
+    private int size = 0;
+    
     public IEnumerator<T> GetEnumerator()
     {
-        throw new NotImplementedException();
+        return new MyEnumerator(this);
     }
-
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
-    
-    private class Node
-    {
-        public required T Value { get; set; }
-        public required Node? Next { get; set; }
-    }
-    
     private class MyEnumerator : IEnumerator<T>
     {
         private readonly MyQueue<T> _queue;
@@ -79,5 +73,11 @@ public class MyQueue<T> : IEnumerable<T>
         {
             _ended = true;
         }
+    }
+    
+    private class Node
+    {
+        public required T Value { get; set; }
+        public required Node? Next { get; set; }
     }
 }
