@@ -14,36 +14,56 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     public bool IsSynchronized => false;
     public object SyncRoot => this;
 
-    public void CopyTo(Array array, int index)
+    public void Enqueue(T item)
     {
-        ArgumentNullException.ThrowIfNull(array);
-
-        if (index < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be greater than 0.");
-        }
-
-        if (index > array.Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), index,
-                "Index must be less or equal than size of array.");
-        }
-
-        if (array.Length - index < _size)
-        {
-            throw new ArgumentException("Invalid length of the array.");
-        }
-
         if (_head is null)
         {
-            return;
+            _head = new Node()
+            {
+                Value = item,
+                Next = null
+            };
+            _tail = _head;
+        }
+        else
+        {
+            var newNode = new Node()
+            {
+                Value = item,
+                Next = null
+            };
+            _tail!.Next = newNode;          //Will never be null if head isn't null
+            _tail = _tail.Next;
         }
 
-        var sourceArray = ToArray();
-
-        Array.Copy(sourceArray, 0, array, index, _size);
+        _size++;
     }
-
+    
+    public T Dequeue()
+    {
+        if (_head is null)
+        {
+            throw new InvalidOperationException("Queue is empty.");
+        }
+        
+        var removed = _head.Value;
+        _head = _head.Next;
+        
+        _size--;
+        
+        return removed;
+    }
+    
+    public T Peek()
+    {
+        if (_head is null)
+        {
+            throw new InvalidOperationException("Queue is empty.");
+        }
+        
+        return _head.Value;
+    }
+    
     public void Clear()
     {
         _size = 0;
@@ -73,55 +93,35 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
 
         return false;
     }
-
-    public void Enqueue(T item)
+    
+    public void CopyTo(Array array, int index)
     {
+        ArgumentNullException.ThrowIfNull(array);
+
+        if (index < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be greater than 0.");
+        }
+
+        if (index > array.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index,
+                "Index must be less or equal than size of array.");
+        }
+
+        if (array.Length - index < _size)
+        {
+            throw new ArgumentException("Invalid length of the array.");
+        }
+
         if (_head is null)
         {
-            _head = new Node()
-            {
-                Value = item,
-                Next = null
-            };
-            _tail = _head;
-        }
-        else
-        {
-            var newNode = new Node()
-            {
-                Value = item,
-                Next = null
-            };
-            _tail!.Next = newNode;          //Will never be null if head isn't null
-            _tail = _tail.Next;
+            return;
         }
 
-        _size++;
-    }
+        var sourceArray = ToArray();
 
-    public T Dequeue()
-    {
-        if (_head is null)
-        {
-            throw new InvalidOperationException("Queue is empty.");
-        }
-        
-        var removed = _head.Value;
-        _head = _head.Next;
-        
-        _size--;
-        
-        return removed;
-    }
-
-    public T Peek()
-    {
-        if (_head is null)
-        {
-            throw new InvalidOperationException("Queue is empty.");
-        }
-        
-        return _head.Value;
+        Array.Copy(sourceArray, 0, array, index, _size);
     }
 
     public T[] ToArray()
@@ -162,26 +162,30 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     private class MyEnumerator : IEnumerator<T>
     {
         private readonly MyQueue<T> _queue;
-        private Node _currentNode;
+        private Node? _currentNode;
         private bool _ended;
 
         internal MyEnumerator(MyQueue<T> queue)
         {
             _queue = queue;
             _ended = false;
-            _currentNode = _queue._head ?? throw new NullReferenceException("Root wasn't instantiated");
+            _currentNode = null;
         }
 
         public T Current
         {
             get
             {
+                if (_currentNode is null)
+                {
+                    throw new InvalidOperationException("Enum wasn't started");
+                }
                 if (_ended)
                 {
                     throw new InvalidOperationException("Enum has already ended");
                 }
 
-                return _currentNode.Value!;
+                return _currentNode.Value;
             }
         }
 
@@ -194,7 +198,18 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
                 return false;
             }
 
-            if (_currentNode.Next is null)
+            if (_currentNode is null)
+            {
+                if (_queue._head is null)
+                {
+                    return false;
+                }
+
+                _currentNode = _queue._head;
+                return true;
+            }
+
+            if (_currentNode.Next is null)            
             {
                 _ended = true;
                 return false;
@@ -207,9 +222,7 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
         public void Reset()
         {
             _ended = false;
-
-            //Has already been checked in ctor
-            _currentNode = _queue._head!;
+            _currentNode = null;
         }
 
         public void Dispose()
