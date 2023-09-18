@@ -3,7 +3,7 @@ using MyQueue.Interfaces;
 
 namespace MyQueue;
 
-public class MyQueue<T> : IEnumerable<T>,
+public class MyQueue<T> : IEnumerable<T>
 {
     private Node? _head;
     private Node? _tail;
@@ -19,7 +19,7 @@ public class MyQueue<T> : IEnumerable<T>,
     
     private class Node
     {
-        public required T Value { get; set; };
+        public required T Value { get; set; }
         public required Node? Next { get; set; }
     }
     
@@ -71,7 +71,6 @@ public class MyQueue<T> : IEnumerable<T>,
 
         public void Reset()
         {
-            _started = false;
             _ended = false;
             _currentNode = _queue._head!; //Has already been checked in ctor
         }
