@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using MyQueue.Interfaces;
 
 namespace MyQueue;
@@ -9,9 +10,9 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     private Node? _tail;
     private int _size = 0;
 
-    public event EventHandler? ItemAdded;
-    public event EventHandler? ItemDeleted;
-    public event EventHandler? QueueCleared;
+    public event EventHandler<CollectionChangeEventArgs>? ItemAdded;
+    public event EventHandler<CollectionChangeEventArgs>? ItemDeleted;
+    public event EventHandler<CollectionChangeEventArgs>? QueueCleared;
 
 
     public int Count => _size;
@@ -41,8 +42,10 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
         }
         _size++;
         
-        ItemAdded?.Invoke(this, EventArgs.Empty);
+        ItemAdded?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Add, item));
     }
+    
+    
     
     public T Dequeue()
     {
@@ -53,10 +56,15 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
         
         var removed = _head.Value;
         _head = _head.Next;
+
+        if (_head is null)
+        {
+            _tail = null;
+        }
         
         _size--;
         
-        ItemDeleted?.Invoke(this, EventArgs.Empty);
+        ItemDeleted?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Remove, removed));
         
         return removed;
     }
@@ -75,8 +83,8 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     {
         _size = 0;
         _head = null;
-        
-        QueueCleared?.Invoke(this, EventArgs.Empty);
+        _tail = null;
+        QueueCleared?.Invoke(this, new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null));
     }
 
     public bool Contains(T item)
@@ -245,4 +253,10 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
         public required T Value { get; set; }
         public required Node? Next { get; set; }
     }
+    
+}
+
+public class Q
+{
+        
 }
