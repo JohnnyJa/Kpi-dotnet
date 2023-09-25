@@ -255,8 +255,3 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     }
     
 }
-
-public class Q
-{
-        
-}
