@@ -7,7 +7,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c24e56c-9a89-40a2-9f0b-39511673f804" name="Changes" comment="Unit Test added" />
+    <list default="true" id="6c24e56c-9a89-40a2-9f0b-39511673f804" name="Changes" comment="Unit Test added">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyQueue/.idea/indexLayout.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyQueue/.idea/projectSettingsUpdater.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyQueue/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MyQueue/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyQueue.sln.DotSettings.user" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,7 +107,7 @@
     ]
   }
 }</component>
-  <component name="RunManager" selected=".NET Project.MyQueueApp">
+  <component name="RunManager">
     <configuration name="MyQueueApp" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -137,6 +144,7 @@
       <workItem from="1695676854595" duration="22000" />
       <workItem from="1695812364170" duration="3897000" />
       <workItem from="1695900181846" duration="6804000" />
+      <workItem from="1695907318872" duration="98000" />
     </task>
     <task id="LOCAL-00001" summary="MyEnumerator finished">
       <option name="closed" value="true" />
