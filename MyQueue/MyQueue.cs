@@ -19,6 +19,17 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
     public bool IsSynchronized => false;
     public object SyncRoot => this;
 
+    public MyQueue()
+    {
+        
+    }
+    public MyQueue(IEnumerable<T> sequence)
+    {
+        foreach (var item in sequence)
+        {
+            Enqueue(item);
+        }
+    }
     public void Enqueue(T item)
     {
         if (_head is null)
@@ -120,10 +131,10 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
             throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be greater than 0.");
         }
 
-        if (index > array.Length)
+        if (index >= array.Length)
         {
             throw new ArgumentOutOfRangeException(nameof(index), index,
-                "Index must be less or equal than size of array.");
+                "Index must be less than size of array.");
         }
 
         if (array.Length - index < _size)
@@ -165,6 +176,8 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
 
         return array;
     }
+    
+
 
     public IEnumerator<T> GetEnumerator()
     {
