@@ -8,7 +8,7 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
 {
     private Node? _head;
     private Node? _tail;
-    private int _size = 0;
+    private int _size;
 
     public event EventHandler<CollectionChangeEventArgs>? ItemAdded;
     public event EventHandler<CollectionChangeEventArgs>? ItemDeleted;
@@ -21,7 +21,7 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
 
     public MyQueue()
     {
-        
+
     }
     public MyQueue(IEnumerable<T> sequence)
     {
@@ -263,7 +263,7 @@ public class MyQueue<T> : IEnumerable<T>, ICollection, IQueue<T>
 
     private class Node
     {
-        public required T Value { get; set; }
+        public required T Value { get; init; }
         public required Node? Next { get; set; }
     }
     

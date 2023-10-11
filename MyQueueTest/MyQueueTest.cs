@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using MyQueue;
 
 namespace MyQueueTest;
@@ -65,15 +66,15 @@ public class Tests
         Assert.That(_filledQueue.Dequeue(), Is.EqualTo(1));
         Assert.That(_filledQueue, Has.Count.EqualTo(5));
     }
-    
+
     [Test]
     public void Dequeue_FilledQueue_DequeueFiveItem()
     {
         for (int i = 0; i < 6; i++)
         {
             Assert.That(_filledQueue.Dequeue(), Is.EqualTo(_valuesToQueue[i]));
-
         }
+
         Assert.That(_filledQueue, Has.Count.EqualTo(0));
     }
 
@@ -190,7 +191,7 @@ public class Tests
         Assert.Throws<ArgumentOutOfRangeException>(() => _filledQueue.CopyTo(arr, -1));
         Assert.Throws<ArgumentOutOfRangeException>(() => _filledQueue.CopyTo(arr, 6));
     }
-    
+
     [Test]
     public void CopyTo_FilledQueueIsGreaterThanArr_ThrowsArgumentException()
     {
@@ -198,7 +199,7 @@ public class Tests
 
         Assert.Throws<ArgumentException>(() => _filledQueue.CopyTo(arr, 0));
     }
-    
+
     [Test]
     public void CopyTo_FilledQueueIsGreaterThanArrFromIndex_ThrowsArgumentException()
     {
@@ -210,7 +211,6 @@ public class Tests
     [Test]
     public void ToArray_EmptyQueue_IsEqualToEmptyArr()
     {
-
         Assert.That(_emptyQueue.ToArray(), Is.EqualTo(Array.Empty<int>()));
     }
 
@@ -229,9 +229,9 @@ public class Tests
         Assert.That(enumerator.Current, Is.EqualTo(1));
     }
 
-    private IEnumerable AsWeakEnumerable<T>(IEnumerable<T> sequence)
+    private IEnumerable AsWeakEnumerable<T>(IEnumerable<T?> sequence)
     {
-        foreach (object o in sequence)
+        foreach (object? o in sequence)
         {
             yield return o;
         }
@@ -261,10 +261,10 @@ public class Tests
         {
             Assert.That(_enumerator.MoveNext(), Is.True);
         }
-        
+
         Assert.That(_enumerator.MoveNext(), Is.False);
     }
-    
+
     [Test]
     public void Enumerator_MoveNext_CorrectEnumeration_IsFalseAfterTheEnd()
     {
@@ -272,7 +272,7 @@ public class Tests
         {
             _enumerator.MoveNext();
         }
-        
+
         Assert.That(_enumerator.MoveNext(), Is.False);
     }
 
@@ -282,13 +282,13 @@ public class Tests
         _enumerator = _emptyQueue.GetEnumerator();
         Assert.That(_enumerator.MoveNext(), Is.False);
     }
-    
+
     [Test]
     public void Enumerator_Current_EnumerationDoesNotStarted_ThrowsInvalidOperationException()
     {
         Assert.Throws<InvalidOperationException>(() =>
         {
-            var i = _enumerator.Current;
+            var unused = _enumerator.Current;
         });
     }
 
@@ -301,27 +301,27 @@ public class Tests
             Assert.That(_enumerator.Current, Is.EqualTo(_valuesToQueue[i++]));
         }
     }
-    
+
     [Test]
     public void Enumerator_Current_EnumerationFinished_ThrowsInvalidOperationException()
     {
         while (_enumerator.MoveNext())
         {
         }
-        
+
         Assert.Throws<InvalidOperationException>(() =>
         {
-            var i = _enumerator.Current;
+            var unused = _enumerator.Current;
         });
     }
-    
+
     [Test]
     public void Enumerator_Reset_EnumerationFinished_MoveNextIsTrue()
     {
         while (_enumerator.MoveNext())
         {
         }
-        
+
         _enumerator.Reset();
 
         Assert.That(_enumerator.MoveNext(), Is.True);
@@ -337,5 +337,50 @@ public class Tests
     public void IsSynchronized_FilledQueue_IsAlwaysTrue()
     {
         Assert.That(_filledQueue.IsSynchronized, Is.False);
+    }
+
+    [Test]
+    public void ItemAdded_Invoked_AddedItemReturns()
+    {
+        _emptyQueue.ItemAdded += (_, e) =>
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(e.Element, Is.EqualTo(_valuesToQueue[0]));
+                Assert.That(e.Action, Is.EqualTo(CollectionChangeAction.Add));
+            });
+        };
+
+        _emptyQueue.Enqueue(_valuesToQueue[0]);
+    }
+
+    [Test]
+    public void ItemDeleted_Invoked_DeletedItemReturns()
+    {
+        _filledQueue.ItemDeleted += (_, e) =>
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(e.Element, Is.EqualTo(_valuesToQueue[0]));
+                Assert.That(e.Action, Is.EqualTo(CollectionChangeAction.Remove));
+            });
+        };
+
+        _filledQueue.Dequeue();
+    }
+
+    [Test]
+    public void QueueCleared_Invoked_NullReturns()
+    {
+        _filledQueue.QueueCleared += (_, e) =>
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(e.Element, Is.Null);
+                Assert.That(e.Action, Is.EqualTo(CollectionChangeAction.Refresh));
+            });
+        };
+
+        _filledQueue.Clear();
     }
 }
